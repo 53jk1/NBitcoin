@@ -75,7 +75,7 @@ namespace NBitcoin.Altcoins
 				MajorityEnforceBlockUpgrade = 750,
 				MajorityRejectBlockOutdated = 950,
 				MajorityWindow = 1000,
-				PowLimit = new Target(0 >> 1),
+				PowLimit = new Target("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"),
 				MinimumChainWork = new uint256("0x000000000000000000000000000000000000000000000000000a0c3931735170"),
 				PowTargetTimespan = TimeSpan.FromSeconds(3 * 50),
 				PowTargetSpacing = TimeSpan.FromSeconds(3 * 50),
