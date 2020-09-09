@@ -4,6 +4,14 @@ using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;
 
+// TODO:
+// [ ] Subsidy window doesn't match
+// [ ] PowLimit doesn't match
+// [ ] CoinbaseMaturity shoulde be 100.
+// [ ] SupportSegwit should be true.
+// [ ] EXT_PUBLIC_KEY and EXT_SECRET_KEY are wrong.
+// [ ] bech32 values should be lower case
+
 namespace NBitcoin.Altcoins
 {
 	// Reference: https://github.com/lbryio/lbrycrd/blob/master/src/chainparams.cpp
