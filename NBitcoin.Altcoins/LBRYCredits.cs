@@ -4,14 +4,6 @@ using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;
 
-// TODO:
-// [ ] Subsidy window doesn't match
-// [ ] PowLimit doesn't match
-// [ ] CoinbaseMaturity shoulde be 100.
-// [ ] SupportSegwit should be true.
-// [ ] EXT_PUBLIC_KEY and EXT_SECRET_KEY are wrong.
-// [ ] bech32 values should be lower case
-
 namespace NBitcoin.Altcoins
 {
 	// Reference: https://github.com/lbryio/lbrycrd/blob/master/src/chainparams.cpp
@@ -79,11 +71,11 @@ namespace NBitcoin.Altcoins
 			var builder = new NetworkBuilder();
 			builder.SetConsensus(new Consensus
 			{
-				SubsidyHalvingInterval = unchecked((int)4000000000),
+				SubsidyHalvingInterval = 1 << 5,
 				MajorityEnforceBlockUpgrade = 750,
 				MajorityRejectBlockOutdated = 950,
 				MajorityWindow = 1000,
-				PowLimit = new Target(0 >> 1),
+				PowLimit = new uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"),
 				MinimumChainWork = new uint256("0x000000000000000000000000000000000000000000000000000a0c3931735170"),
 				PowTargetTimespan = TimeSpan.FromSeconds(3 * 50),
 				PowTargetSpacing = TimeSpan.FromSeconds(3 * 50),
@@ -91,16 +83,16 @@ namespace NBitcoin.Altcoins
 				CoinbaseMaturity = 50,
 				PowNoRetargeting = false,
 				ConsensusFactory = LBRYCreditsConsensusFactory.Instance,
-				SupportSegwit = false,
-				CoinType = 31
+				SupportSegwit = true,
+				CoinType = 31s
 			})
 				.SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 85 })
 				.SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 122 })
 				.SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 28 })
-				.SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x04, 0x35, 0x87, 0xCF })
-				.SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x04, 0x35, 0x83, 0x94 })
-				.SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("LBC"))
-				.SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("LBC"))
+				.SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x04, 0x88, 0xB2, 0x1E )
+				.SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x04, 0x88, 0xAD, 0xE4 })
+				.SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("lbc"))
+				.SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("lbc"))
 				.SetMagic(0xfae4aaf1)
 				.SetPort(9246)
 				.SetRPCPort(9245)
@@ -124,19 +116,19 @@ namespace NBitcoin.Altcoins
 			var builder = new NetworkBuilder();
 			builder.SetConsensus(new Consensus
 			{
-				SubsidyHalvingInterval = unchecked((int)1000000000),
+				SubsidyHalvingInterval = 1 << 5,
 				MajorityEnforceBlockUpgrade = 51,
 				MajorityRejectBlockOutdated = 75,
 				MajorityWindow = 100,
-				PowLimit = new Target(0 >> 1),
+				PowLimit = new uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"),
 				MinimumChainWork = new uint256("0x000000000000000000000000000000000000000000000000000a0c3931735170"),
 				PowTargetTimespan = TimeSpan.FromSeconds(3 * 50),
 				PowTargetSpacing = TimeSpan.FromSeconds(3 * 50),
 				PowAllowMinDifficultyBlocks = true,
-				CoinbaseMaturity = 15,
+				CoinbaseMaturity = 100,
 				PowNoRetargeting = false,
 				ConsensusFactory = LBRYCreditsConsensusFactory.Instance,
-				SupportSegwit = false,
+				SupportSegwit = true,
 				CoinType = 1
 			})
 				.SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 111 })
@@ -144,8 +136,8 @@ namespace NBitcoin.Altcoins
 				.SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 239 })
 				.SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x04, 0x35, 0x87, 0xCF })
 				.SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x04, 0x35, 0x83, 0x94 })
-				.SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("tLBC"))
-				.SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("tLBC"))
+				.SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("tlbc"))
+				.SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("tlbc"))
 				.SetMagic(0xfae4aae1)
 				.SetPort(29246)
 				.SetRPCPort(19245)
@@ -164,27 +156,27 @@ namespace NBitcoin.Altcoins
 			var builder = new NetworkBuilder();
 			var res = builder.SetConsensus(new Consensus
 			{
-				SubsidyHalvingInterval = 150,
+				SubsidyHalvingInterval =  1 << 5,
 				MajorityEnforceBlockUpgrade = 750,
 				MajorityRejectBlockOutdated = 950,
 				MajorityWindow = 1000,
-				PowLimit = new Target(0 >> 1),
+				PowLimit = new uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"),
 				MinimumChainWork = new uint256("0000000000000000000000000000000000000000000000000000000000000000"),
 				PowTargetTimespan = TimeSpan.FromSeconds(1),
 				PowTargetSpacing = TimeSpan.FromSeconds(1),
 				PowAllowMinDifficultyBlocks = false,
-				CoinbaseMaturity = 0,
+				CoinbaseMaturity = 100,
 				PowNoRetargeting = true,
 				ConsensusFactory = LBRYCreditsConsensusFactory.Instance,
-				SupportSegwit = false
+				SupportSegwit = true
 			})
 				.SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 111 })
 				.SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 196 })
 				.SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 239 })
 				.SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x04, 0x35, 0x87, 0xCF })
 				.SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x04, 0x35, 0x83, 0x94 })
-				.SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("rtLBC"))
-				.SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("rtLBC"))
+				.SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("rtlbc"))	//Chyba powinno być "rlbc"
+				.SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("rtlbc"))
 				.SetMagic(0xfae4aad1)
 				.SetPort(29246)
 				.SetRPCPort(29245)
