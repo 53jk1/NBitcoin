@@ -34,11 +34,22 @@ namespace NBitcoin.Tests
 			Assert.False(mnemonic.IsValidChecksum);
 		}
 
+		[Fact]
+		[Trait("UnitTest", "UnitTest")]
+		public void CanNormalizeMnemonicString()
+		{
+			var mnemonic = new Mnemonic("turtle front uncle idea crush write shrug there lottery flower risk shell", Wordlist.English);
+			var mnemonic2 = new Mnemonic("turtle    front	uncle　 idea crush write shrug there lottery flower risk shell", Wordlist.English);
+			Assert.Equal(mnemonic.DeriveExtKey().ScriptPubKey, mnemonic2.DeriveExtKey().ScriptPubKey);
+			Assert.Equal(mnemonic.ToString(), mnemonic2.ToString());
+		}
 
 		[Fact]
 		[Trait("UnitTest", "UnitTest")]
 		public void CanCheckBIP39TestVectors()
 		{
+			var mnemo = new Mnemonic("げすと やおや        てらす　こくとう　ひめじし　ねっしん　せあぶら　けむり　うえる　せたけ　まもる　きつね　たおれる　うらぐち　はしご　らたい　しゃたい　けんとう　すすむ　こえる　もんだい");
+			Assert.Equal("げすと　やおや　てらす　こくとう　ひめじし　ねっしん　せあぶら　けむり　うえる　せたけ　まもる　きつね　たおれる　うらぐち　はしご　らたい　しゃたい　けんとう　すすむ　こえる　もんだい", mnemo.ToString());
 			CanCheckBIP39TestVectorsCore("fr", Wordlist.French);
 			CanCheckBIP39TestVectorsCore("ja", Wordlist.Japanese);
 			CanCheckBIP39TestVectorsCore("es", Wordlist.Spanish);

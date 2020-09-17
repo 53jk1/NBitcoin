@@ -3341,6 +3341,7 @@ namespace NBitcoin.Tests
 		[Fact]
 		public void Play()
 		{
+			PSBT.Parse("cHNidP8BAO4CAAAAA1l0qlcorgQkiCw7qmaHqsDOqqXIH3nhUg1SKBfjokVxAQAAAAD/////VBglU5rrOqXZuwUMDDukTUDf1AD2g7ewuEYi1yootokCAAAAAP////+ZYgiMHuw5qtUuD+zv8+zwEoyyA+rg8NP1z4sXLFaigwAAAAAA/////wPaSA8AAAAAACIAIPEXP/HT8TRnOgaz1sBpiXzc37jIvWoHq7zI2JNwxcVwmeHdAAAAAAAWABTRmkMJqEgQ9xCFzoiTXKqpqdJijIIJEwAAAAAAFgAUF36qeq69om977gjsNmFJjWMe2eMAAAAATwEENYfPA2PpuymAAAAAGlMAWhlgJOXf3pjU2zq/XPnm4YTjZ0RfbQLFt3FY7YMDFJvWYZWwtoXqQIe/XJZINGbXTo9URCfmlPHfsxG8jSIQAC9qsVQAAIABAACAAAAAgAABAR8SDeQAAAAAABYAFMXFFPJyOc/CE2b3Bb6CxBtBurD4IgIDlcDR93KkFfs4VOsrItkmgInE+NHQlxU51O3U00Qv2l5HMEQCIEyYerSDk3Vf9lB3XDJwBuOU+cyJwzTrKOjdSaOlfZ33AiApHWeGaCKZcBYVb7VlFO7v5JMWEGf0Uct+sP4QaVgnsQEiBgOVwNH3cqQV+zhU6ysi2SaAicT40dCXFTnU7dTTRC/aXhgAL2qxVAAAgAEAAIAAAACAAQAAAAMAAAAAAQEfY1APAAAAAAAWABSGCYgolb12JN+hbTsmhMqFSBI+pQABAR/Y8QwAAAAAABYAFN0X/NjFP5/Aql1sY3xmzuIxLr2nAAAiAgJ88iXlQpQWdrF8pazMEjnVpZALOnd2iPLVa0p4+YtxcBgAL2qxVAAAgAEAAIAAAACAAQAAAAQAAAAAAA==", Network.Main);
 		}
 
 		class BrokenCoinSelector : ICoinSelector
@@ -4489,6 +4490,87 @@ namespace NBitcoin.Tests
 			Assert.Equal(2, tx.Inputs.Count);
 			Assert.Single(tx.Outputs);
 			Assert.Equal(Money.Coins(1.0m) - fee, tx.Outputs.First(o => o.ScriptPubKey == dest2.ScriptPubKey).Value);
+		}
+
+		[Fact]
+		public void ShuffleAfterContinueBuild()
+		{
+			var k1 = new Key();
+			var k2 = new Key();
+			var k3 = new Key();
+			var dest1 = k1.PubKey.Hash;
+			var dest2 = k2.PubKey.Hash;
+			var dest3 = k3.PubKey.Hash;
+
+			var coin1_1 = RandomCoin(Money.Coins(0.1m), k1);
+			var coin1_2 = RandomCoin(Money.Coins(0.2m), k1);
+			var coin2 = RandomCoin(Money.Coins(0.3m), k2);
+
+			var rate = new FeeRate(Money.Coins(0.0004m));
+			var builder = Network
+				.CreateTransactionBuilder();
+			builder
+				.AddCoins(coin1_1)
+				.AddCoins(coin1_2)
+				.AddKeys(k1)
+				.Send(dest3, Money.Coins(0.1m))
+				.SendEstimatedFees(rate)
+				.SendAllRemaining(dest1);
+
+			var tx = builder.BuildTransaction(false);
+			builder = Network
+				.CreateTransactionBuilder();
+			builder
+				.ContinueToBuild(tx)
+				.AddCoins(coin1_1)
+				.AddCoins(coin1_2)
+				.AddCoins(coin2)
+				.AddKeys(k2)
+				.SendEstimatedFees(rate)
+				.SendAllRemaining(dest2);
+
+			tx = builder.BuildTransaction(false);
+
+			Assert.Equal(3, tx.Inputs.Count);
+			Assert.Equal(3, tx.Outputs.Count);
+		}
+
+		[Fact]
+		public void CanDisableShuffle()
+		{
+			var builder = Network
+				.CreateTransactionBuilder(42);
+
+			builder.ShuffleInputs = false;
+			builder.ShuffleOutputs = false;
+
+			var k1 = new Key();
+			var k2 = new Key();
+			var dest1 = k1.PubKey.Hash;
+			var dest2 = k2.PubKey.Hash;
+
+			var coin1 = RandomCoin(Money.Coins(0.1m), k1);
+			var coin2 = RandomCoin(Money.Coins(0.2m), k1);
+
+			var rate = new FeeRate(Money.Coins(0.0004m));
+			builder
+				.AddCoins(coin1)
+				.AddCoins(coin2)
+				.AddKeys(k1)
+				.SendEstimatedFees(rate)
+				.Send(dest2, coin2.Amount)
+				.SendAllRemaining(dest1);
+
+			var tx = builder.BuildTransaction(true);
+			if (!builder.Verify(tx, out var errors))
+				throw new AggregateException(errors.Select(e => new Exception(e.ToString())));
+
+			Assert.Equal(2, tx.Inputs.Count);
+			Assert.Equal(coin1.Outpoint, tx.Inputs[0].PrevOut);
+			Assert.Equal(coin2.Outpoint, tx.Inputs[1].PrevOut);
+
+			Assert.Equal(2, tx.Outputs.Count);
+			Assert.Equal(coin2.Amount, tx.Outputs[0].Value);
 		}
 	}
 }
