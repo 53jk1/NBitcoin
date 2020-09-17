@@ -1,5 +1,9 @@
 using System;
 using System.Linq;
+using System.Net;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;
@@ -75,7 +79,7 @@ namespace NBitcoin.Altcoins
 				MajorityEnforceBlockUpgrade = 750,
 				MajorityRejectBlockOutdated = 950,
 				MajorityWindow = 1000,
-				PowLimit = new uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"),
+				PowLimit = new Target(new uint256("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")),
 				MinimumChainWork = new uint256("0x000000000000000000000000000000000000000000000000000a0c3931735170"),
 				PowTargetTimespan = TimeSpan.FromSeconds(3 * 50),
 				PowTargetSpacing = TimeSpan.FromSeconds(3 * 50),
@@ -84,12 +88,12 @@ namespace NBitcoin.Altcoins
 				PowNoRetargeting = false,
 				ConsensusFactory = LBRYCreditsConsensusFactory.Instance,
 				SupportSegwit = true,
-				CoinType = 31s
+				CoinType = 31,
 			})
 				.SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 85 })
 				.SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 122 })
 				.SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 28 })
-				.SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x04, 0x88, 0xB2, 0x1E )
+				.SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x04, 0x88, 0xB2, 0x1E })
 				.SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x04, 0x88, 0xAD, 0xE4 })
 				.SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("lbc"))
 				.SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("lbc"))
@@ -120,7 +124,7 @@ namespace NBitcoin.Altcoins
 				MajorityEnforceBlockUpgrade = 51,
 				MajorityRejectBlockOutdated = 75,
 				MajorityWindow = 100,
-				PowLimit = new uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"),
+				PowLimit = new Target(new uint256("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")),
 				MinimumChainWork = new uint256("0x000000000000000000000000000000000000000000000000000a0c3931735170"),
 				PowTargetTimespan = TimeSpan.FromSeconds(3 * 50),
 				PowTargetSpacing = TimeSpan.FromSeconds(3 * 50),
@@ -160,7 +164,7 @@ namespace NBitcoin.Altcoins
 				MajorityEnforceBlockUpgrade = 750,
 				MajorityRejectBlockOutdated = 950,
 				MajorityWindow = 1000,
-				PowLimit = new uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"),
+				PowLimit = new Target(new uint256("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")),
 				MinimumChainWork = new uint256("0000000000000000000000000000000000000000000000000000000000000000"),
 				PowTargetTimespan = TimeSpan.FromSeconds(1),
 				PowTargetSpacing = TimeSpan.FromSeconds(1),
