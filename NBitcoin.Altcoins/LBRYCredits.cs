@@ -46,7 +46,9 @@ namespace NBitcoin.Altcoins
 
 			public override uint256 GetPoWHash()
 			{
-				throw new NotSupportedException("PoW for LBC is not supported");
+				var headerBytes = this.ToBytes();
+				var h = NBitcoin.Crypto.SCrypt.ComputeDerivedKey(headerBytes, headerBytes, 1024, 1, 1, null, 32);
+				return new uint256(h);
 			}
 		}
 
